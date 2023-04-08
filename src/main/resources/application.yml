@@ -1,0 +1,22 @@
+spring:
+  datasource:
+    url: "jdbc:mysql://forcapstone.clrjf5fgkqeq.ap-northeast-2.rds.amazonaws.com:3306/capstone?useSSL=false&useUnicode=true&serverTimezone=Asia/Seoul"
+    username: "admin"
+    password: "forcapstone"
+    driver-class-name: com.mysql.cj.jdbc.Driver
+  jpa:
+    hibernate:
+      ddl-auto: create
+    properties:
+      hibernate:
+        format_sql: true
+        show_sql: true
+        dialect: org.hibernate.dialect.MySQL8Dialect
+logging:
+  level:
+    org:
+      hibernate:
+        SQL: DEBUG # CHECK SQL
+        orm:
+          jdbc:
+            bind: TRACE #PARAMETER CHECK
