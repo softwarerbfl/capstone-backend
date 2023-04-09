@@ -39,7 +39,7 @@ public class LoginController {
 
         HttpSession session = request.getSession(true);
         session.setAttribute(SessionConst.LOGIN_MEMBER, member);
-        return new ResponseEntity<>("ok", HttpStatus.OK); // 로그인에 성공했으면 회원 이름 반환
+        return new ResponseEntity<>("Success login", HttpStatus.OK); // 로그인에 성공했으면 회원 이름 반환
 
     }
 

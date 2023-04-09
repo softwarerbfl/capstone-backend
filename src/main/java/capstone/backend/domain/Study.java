@@ -1,8 +1,11 @@
 package capstone.backend.domain;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -27,6 +30,7 @@ public class Study {
     @Enumerated(EnumType.STRING)
     private Category category;
 
+    @JsonIgnore
     @OneToOne(fetch = FetchType.LAZY)
     private Member leader;
 

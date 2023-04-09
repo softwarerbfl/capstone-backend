@@ -1,4 +1,5 @@
 package capstone.backend.dto;
+import capstone.backend.domain.Category;
 import jakarta.validation.constraints.NotEmpty;
 import lombok.Data;
 
