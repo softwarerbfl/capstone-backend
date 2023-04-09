@@ -14,7 +14,6 @@ public class StudyDto {
     @NotEmpty
     private String category;
 
-    @NotEmpty
     private Long maxPeople;
 
     private String introduce;

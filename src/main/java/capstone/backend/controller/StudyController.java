@@ -27,7 +27,7 @@ import java.util.List;
 @RestController
 @RequiredArgsConstructor
 @Slf4j
-@RequestMapping("study")
+@RequestMapping("/study")
 public class StudyController {
     private final StudyService studyService;
     private final StudyRepository studyRepository;
@@ -55,34 +55,34 @@ public class StudyController {
         Study study = studyService.save(dto, member);
 
         //스터디 개설에 성공한 경우
-        return new ResponseEntity<>("Success study save", HttpStatus.BAD_REQUEST);
+        return new ResponseEntity<>("Success study save", HttpStatus.OK);
     }
 
     /**
-     * 최근에 개설된 스터디 상위 15개 리스트
+     * 최근에 개설된 스터디 상위 8개 리스트
      */
     @GetMapping("/recruit")
-    public Page<Study> recentStudy(@PageableDefault(size = 15, sort = "id", direction = Sort.Direction.DESC) Pageable pageable) {
+    public Page<Study> recentStudy(@PageableDefault(size = 8, sort = "id", direction = Sort.Direction.DESC) Pageable pageable) {
         Page<Study> studies = studyService.recentStudy(pageable);
         return studies;
     }
 
     /**
-     * 검색어가 포함된 스터디 상위 15개 리스트
+     * 검색어가 포함된 스터디 상위 8개 리스트
      */
     @GetMapping("/recruit/search/{keyword}")
-    public List<Study> searchRecentStudy(@PageableDefault(size=15, sort = "id", direction = Sort.Direction.DESC) Pageable pageable,
+    public List<Study> searchRecentStudy(@PageableDefault(size=8, sort = "id", direction = Sort.Direction.DESC) Pageable pageable,
                                          @PathVariable String keyword){
         List<Study> studies = studyService.searchRecentStudy(keyword, pageable);
         return studies;
     }
 
     /**
-     * 카테고리에 해당되는 스터디 상위 15개 리스트
+     * 카테고리에 해당되는 스터디 상위 8개 리스트
      */
     @GetMapping("/recruit/{category}")
     public Page<Study> findByCategory(@PathVariable("category") String category,
-                                      @PageableDefault(size=15, sort="id", direction = Sort.Direction.DESC) Pageable pageable){
+                                      @PageableDefault(size=8, sort="id", direction = Sort.Direction.DESC) Pageable pageable){
         Page<Study> study = studyService.findByStudyCategory(category, pageable);
         return study;
     }
