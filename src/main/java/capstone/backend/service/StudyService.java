@@ -45,6 +45,14 @@ public class StudyService {
     }
 
     /**
+     * 스터디 모집 - 페이징 처리( 카테고리 필터링)
+     */
+    public Page<Study> findByStudyCategory(String category, Pageable pageable){
+        Category strToCategory = Category.valueOf(category);
+        Page<Study> studyPage = studyRepository.findByCategory(strToCategory, pageable);
+        return studyPage;
+    }
+    /**
      * 스터디 고유 id로 Study 객체 찾기
      */
     public Study findByStudyId(Long id){

@@ -11,6 +11,7 @@ import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.aspectj.weaver.ast.Literal;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
@@ -69,11 +70,21 @@ public class StudyController {
     /**
      * 검색어가 포함된 스터디 상위 15개 리스트
      */
-    @GetMapping("/recruit/{keyword}")
+    @GetMapping("/recruit/search/{keyword}")
     public List<Study> searchRecentStudy(@PageableDefault(size=15, sort = "id", direction = Sort.Direction.DESC) Pageable pageable,
                                          @PathVariable String keyword){
         List<Study> studies = studyService.searchRecentStudy(keyword, pageable);
         return studies;
+    }
+
+    /**
+     * 카테고리에 해당되는 스터디 상위 15개 리스트
+     */
+    @GetMapping("/recruit/{category}")
+    public Page<Study> findByCategory(@PathVariable("category") String category,
+                                      @PageableDefault(size=15, sort="id", direction = Sort.Direction.DESC) Pageable pageable){
+        Page<Study> study = studyService.findByStudyCategory(category, pageable);
+        return study;
     }
     /**
      * 스터디 아이디를 PathVariable로 주면 스터디를 찾아 스터디 객체를 반환
