@@ -30,6 +30,12 @@ public class Study {
     @Enumerated(EnumType.STRING)
     private Category category;
 
+    @Column(name = "max_people")
+    private Long maxPeople;
+
+    @Column(name = "introduce")
+    private String introduce;
+
     @JsonIgnore
     @OneToOne(fetch = FetchType.LAZY)
     private Member leader;

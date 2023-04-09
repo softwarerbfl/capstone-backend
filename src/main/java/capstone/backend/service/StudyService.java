@@ -26,6 +26,8 @@ public class StudyService {
         Study study = new Study();
         study.setStudyName(dto.getName());
         study.setLeader(member);
+        study.setIntroduce(dto.getIntroduce());
+        study.setMaxPeople(dto.getMaxPeople());
         study.setCategory(Category.valueOf(dto.getCategory()));
         studyRepository.save(study);
         return study;
