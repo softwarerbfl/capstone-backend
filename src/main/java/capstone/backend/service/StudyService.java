@@ -11,6 +11,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @RequiredArgsConstructor
 public class StudyService {
@@ -34,5 +35,11 @@ public class StudyService {
      */
     public Page<Study> recentStudy(Pageable pageable){
         return studyRepository.findAll(pageable);
+    }
+    /**
+     * 스터디 모집 - 페이징 처리(검색어 있을 경우)
+     */
+    public List<Study> searchRecentStudy(String keyword, Pageable pageable){
+        return studyRepository.findByStudyNameContaining(keyword, pageable);
     }
 }
