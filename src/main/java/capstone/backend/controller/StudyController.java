@@ -75,4 +75,12 @@ public class StudyController {
         List<Study> studies = studyService.searchRecentStudy(keyword, pageable);
         return studies;
     }
+    /**
+     * 스터디 아이디를 PathVariable로 주면 스터디를 찾아 스터디 객체를 반환
+     */
+    @GetMapping("/{id}")
+    public ResponseEntity<Study> findByStudyId(@PathVariable Long id){
+        Study study = studyService.findByStudyId(id);
+        return ResponseEntity.status(HttpStatus.OK).body(study);
+    }
 }

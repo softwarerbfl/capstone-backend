@@ -12,6 +12,7 @@ import org.springframework.data.domain.Pageable;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 
 @RequiredArgsConstructor
 public class StudyService {
@@ -41,5 +42,13 @@ public class StudyService {
      */
     public List<Study> searchRecentStudy(String keyword, Pageable pageable){
         return studyRepository.findByStudyNameContaining(keyword, pageable);
+    }
+
+    /**
+     * 스터디 고유 id로 Study 객체 찾기
+     */
+    public Study findByStudyId(Long id){
+        Optional<Study> study = studyRepository.findById(id);
+        return study.orElse(null);
     }
 }
