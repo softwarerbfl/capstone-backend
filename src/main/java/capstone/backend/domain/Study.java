@@ -39,7 +39,17 @@ public class Study {
     @JsonIgnore
     @OneToOne(fetch = FetchType.LAZY)
     private Member leader;
+    @Column(name = "created_date_time")
+    private LocalDateTime createdDateTime;
 
-//    @ManyToMany(fetch = FetchType.LAZY)
-//    private List<Member> members = new ArrayList<>();
+    // 이 스터디의 멤버들
+    @JsonIgnore
+    @OneToMany(mappedBy = "study")
+    private List<MemberStudy> memberStudies = new ArrayList<>();
+
+    // 이 스터디의 게시물들( 멤버가 스터디를 선택해서 글을 쓰므로)
+    @JsonIgnore
+    @OneToMany(mappedBy = "study")
+    private List<Posting> postings = new ArrayList<>();
+
 }

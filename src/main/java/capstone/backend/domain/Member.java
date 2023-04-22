@@ -1,5 +1,6 @@
 package capstone.backend.domain;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -33,5 +34,15 @@ public class Member {
     private LocalDate birth;
     private List<Category> interest;
     private String email;
+
+    // 멤버가 가입한 스터디
+    @JsonIgnore
+    @OneToMany(mappedBy = "member")
+    private List<MemberStudy> memberStudies = new ArrayList<>();
+
+    // 멤버가 쓴 글
+    @JsonIgnore
+    @OneToMany(mappedBy = "member")
+    private List<Posting> postings = new ArrayList<>();
 
 }

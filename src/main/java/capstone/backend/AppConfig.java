@@ -1,6 +1,7 @@
 package capstone.backend;
 
 import capstone.backend.service.LoginService;
+import capstone.backend.service.PostingService;
 import capstone.backend.service.StudyService;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.EntityManagerFactory;
@@ -25,6 +26,11 @@ public class AppConfig {
     @Bean
     public StudyService studyService() {
         return new StudyService();
+    }
+
+    @Bean
+    public PostingService postingService() {
+        return new PostingService();
     }
 
 

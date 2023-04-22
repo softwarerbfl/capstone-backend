@@ -94,4 +94,56 @@ public class StudyController {
         Study study = studyService.findByStudyId(id);
         return ResponseEntity.status(HttpStatus.OK).body(study);
     }
+
+    /**
+     * 스터디 아이디를 PathVariable로 주면 스터디를 찾아 스터디 멤버 객체를 페이지 형태로 반환
+     * 따로 반환하는 이유는 매핑때문에 @JsonIgnore 를 붙인 컬럼들은 위의 스터디 객체 반환 API 에서 안 뜨기 때문
+     */
+    @GetMapping("/{id}/members")
+    public Page<Member> findMembersByStudyId(@PathVariable Long id,
+                                             @PageableDefault(size=15, sort="id", direction = Sort.Direction.DESC) Pageable pageable){
+        Study study = studyService.findByStudyId(id);
+        Page<Member> memberList = studyService.findMembersByStudyId(study, pageable);
+        return memberList;
+    }
+
+    /**
+     * 스터디 가입, {id}는 스터디의 id
+     */
+    @GetMapping("/join/{id}")
+    public ResponseEntity<String> join(@PathVariable Long id, HttpServletRequest request){
+        HttpSession session = request.getSession(false);
+        if (session == null) {
+            return new ResponseEntity<>("no session", HttpStatus.BAD_REQUEST);
+        }
+        Member member = (Member) session.getAttribute(SessionConst.LOGIN_MEMBER);
+        if (member == null) {
+            return new ResponseEntity<>("no member", HttpStatus.BAD_REQUEST);
+        }
+        Study study = studyService.findByStudyId(id);
+        studyService.joinStudy(member, study);
+        return new ResponseEntity<>("Success study join", HttpStatus.OK);
+    }
+
+    /**
+     * 로그인 한 멤버의 스터디 리스트를 반환
+     */
+    @GetMapping("/my")
+    public Page<Study> myStudyList(HttpServletRequest request,
+                                   @PageableDefault(size=15, sort="id", direction = Sort.Direction.DESC) Pageable pageable){
+        HttpSession session = request.getSession(false);
+        Member member = (Member) session.getAttribute(SessionConst.LOGIN_MEMBER);
+
+        Page<Study> studyList = studyService.findStudyListByMember(member, pageable);
+        return studyList;
+    }
+
+    /**
+     * 로그인 한 멤버가 가입한 스터디의 모집글 리스트를 페이지 형태로 반환
+     */
+    @GetMapping("/recruitment")
+    public Page<String> myStudyRecruitmentList(@PageableDefault(size=15, sort="id", direction = Sort.Direction.DESC) Pageable pageable){
+        Page<String> studyList = studyService.findRecruitmentList(pageable);
+        return studyList;
+    }
 }
