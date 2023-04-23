@@ -121,8 +121,12 @@ public class StudyController {
             return new ResponseEntity<>("no member", HttpStatus.BAD_REQUEST);
         }
         Study study = studyService.findByStudyId(id);
-        studyService.joinStudy(member, study);
-        return new ResponseEntity<>("Success study join", HttpStatus.OK);
+        boolean result = studyService.joinStudy(member, study);
+        if (result == true){
+            return new ResponseEntity<>("Success study join", HttpStatus.OK);
+        }else{
+            return new ResponseEntity<>("Failed: already joined", HttpStatus.OK);
+        }
     }
 
     /**

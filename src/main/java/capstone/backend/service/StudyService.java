@@ -112,7 +112,7 @@ public class StudyService {
      * 스터디 가입
      * 멤버랑 스터디를 인자로 주면 멤버스터디 객체를 만드는데, 만약에 이미 가입한 이력이 있다면 추가로 저장하지 않음
      */
-    public void joinStudy(Member member, Study study){
+    public boolean joinStudy(Member member, Study study){
         // 새 memberStudy를 만들고
         MemberStudy memberStudy = new MemberStudy();
         memberStudy.setStudy(study);
@@ -124,11 +124,12 @@ public class StudyService {
         // 만약 그 스터디들 중 새로 가입하려는 스터디가 있다면 저장하지 않음
         for(int i=0; i<memberStudyList.size(); i++){
             if (memberStudyList.get(i).getStudy() == study){
-                return;
+                return false;
             }
         }
         // 만약에 스터디 가입 이력이 없다면 저장
         memberStudyRepository.save(memberStudy);
+        return true;
     }
 
     /**
