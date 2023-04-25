@@ -8,6 +8,7 @@ import capstone.backend.dto.StudyDto;
 import capstone.backend.repository.MemberStudyRepository;
 import capstone.backend.repository.StudyRepository;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
@@ -19,6 +20,7 @@ import java.util.List;
 import java.util.Optional;
 
 @RequiredArgsConstructor
+@Slf4j
 public class StudyService {
     @Autowired
     private StudyRepository studyRepository;
@@ -88,27 +90,6 @@ public class StudyService {
     }
 
     /**
-     * 내 스터디 찾기
-     * 멤버가 가입한 스터디 리스트들을 페이지 형태로 반환
-     */
-    public Page<Study> findStudyListByMember(Member member, Pageable pageable){
-        // 멤버가 가입한 memberStudy 객체들을 먼저 찾고
-        List<MemberStudy> memberStudyList = memberStudyRepository.findByMember(member);
-
-        // 그 memberStudy 객체들에서 스터디들을 찾아서 가져오는 것
-        List<Study> studyList = new ArrayList<>();
-        for (int i=0; i<memberStudyList.size(); i++){
-            studyList.add(memberStudyList.get(i).getStudy());
-        }
-
-        // 그 스터디 리스트를 페이지 형태로 바꿔서 반환
-        final int start = (int)pageable.getOffset();
-        final int end = Math.min((start + pageable.getPageSize()), studyList.size());
-        final Page<Study> studyPage = new PageImpl<>(studyList.subList(start, end), pageable, studyList.size());
-        return studyPage;
-    }
-
-    /**
      * 스터디 가입
      * 멤버랑 스터디를 인자로 주면 멤버스터디 객체를 만드는데, 만약에 이미 가입한 이력이 있다면 추가로 저장하지 않음
      */
@@ -133,23 +114,59 @@ public class StudyService {
     }
 
     /**
-     * 모집글 찾기
-     * 멤버를 인자로 주면 모집글을 찾아서 반환
+     * 내 스터디 찾기
+     * 멤버가 가입한 스터디 리스트들을 페이지 형태로 반환
      */
-    public Page<String> findRecruitmentList(Pageable pageable){
-        // 멤버가 속한 스터디들을 찾기
-        List<Study> studyList = studyRepository.findAll(Sort.by(Sort.Direction.DESC,"createdDateTime"));
-        List<String> recruitmentList = new ArrayList<>();
+    public Page<Study> findStudyListByMember(Member member, Pageable pageable){
+        // 멤버가 가입한 memberStudy 객체들을 먼저 찾고
+        List<MemberStudy> memberStudyList = memberStudyRepository.findByMember(member);
 
-        // for문을 돌면서 멤버가 가입한 스터디들의 introduce(recruitment, 모집글)를 리스트에 답기
+        // 그 memberStudy 객체들에서 스터디들을 찾아서 가져오는 것
+        List<Study> studyList = new ArrayList<>();
+        for (int i=0; i<memberStudyList.size(); i++){
+            studyList.add(memberStudyList.get(i).getStudy());
+        }
+
+        // 그 스터디 리스트를 페이지 형태로 바꿔서 반환
+        final int start = (int)pageable.getOffset();
+        final int end = Math.min((start + pageable.getPageSize()), studyList.size());
+        final Page<Study> studyPage = new PageImpl<>(studyList.subList(start, end), pageable, studyList.size());
+        return studyPage;
+    }
+
+    /**
+     * 모집글 찾기
+     * 멤버를 인자로 주면 해당 멤버가 속해있지 않은 스터디들을 찾아서 반환
+     */
+    public Page<Study> findRecruitmentList(Pageable pageable, Member member){
+        // 모든 스터디를 불러옴
+        List<Study> studyList = studyRepository.findAll(Sort.by(Sort.Direction.DESC,"createdDateTime"));
+
+        // member가 속한 스터디의 MemberStudy 객체 리스트 받아옴
+        List<MemberStudy> myStudyList = memberStudyRepository.findByMember(member);
+
+        //member가 속한 Study의 id 리스트
+        List<Long> myStudy = new ArrayList<>();
+        // memberStudy 객체들에서 스터디들을 찾아서 가져오는 것
+        for (int i=0; i<myStudyList.size(); i++){
+            Study study = myStudyList.get(i).getStudy();
+            myStudy.add(study.getId());
+        }
+
+        //모집글을 담을 리스트
+        List<Study> recruitmentList = new ArrayList<>();
+
+        // for 문을 돌면서 멤버가 가입하지 않은 스터디들의 introduce(recruitment, 모집글)를 리스트에 답기
         for(int i=0; i<studyList.size(); i++) {
-            recruitmentList.add(studyList.get(i).getIntroduce());
+            if(myStudy.contains(studyList.get(i).getId())==false){
+                recruitmentList.add(studyList.get(i));
+            }
         }
 
         // introduce 리스트를 페이지 형태로 반환
         final int start = (int)pageable.getOffset();
         final int end = Math.min((start + pageable.getPageSize()), recruitmentList.size());
-        final Page<String> recruitmentPage = new PageImpl<>(recruitmentList.subList(start, end), pageable, recruitmentList.size());
+        final Page<Study> recruitmentPage = new PageImpl<>(recruitmentList.subList(start, end), pageable, recruitmentList.size());
         return recruitmentPage;
     }
 }

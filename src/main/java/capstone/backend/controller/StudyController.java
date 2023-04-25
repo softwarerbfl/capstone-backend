@@ -53,7 +53,7 @@ public class StudyController {
             return new ResponseEntity<>("no member", HttpStatus.BAD_REQUEST);
         }
         Study study = studyService.save(dto, member);
-
+        studyService.joinStudy(member, study);
         //스터디 개설에 성공한 경우
         return new ResponseEntity<>("Success study save", HttpStatus.OK);
     }
@@ -130,7 +130,8 @@ public class StudyController {
     }
 
     /**
-     * 로그인 한 멤버의 스터디 리스트를 반환
+     * 내 스터디
+     * 로그인 한 멤버가 가입한 스터디 리스트를 반환
      */
     @GetMapping("/my")
     public Page<Study> myStudyList(HttpServletRequest request,
@@ -143,11 +144,16 @@ public class StudyController {
     }
 
     /**
-     * 로그인 한 멤버가 가입한 스터디의 모집글 리스트를 페이지 형태로 반환
+     * 스터디 모집글
+     * 로그인 한 멤버가 가입한 스터디 리스트를 반환
      */
     @GetMapping("/recruitment")
-    public Page<String> myStudyRecruitmentList(@PageableDefault(size=15, sort="id", direction = Sort.Direction.DESC) Pageable pageable){
-        Page<String> studyList = studyService.findRecruitmentList(pageable);
+    public Page<Study> myStudyRecruitmentList(HttpServletRequest request,
+                                               @PageableDefault(size=15, sort="id", direction = Sort.Direction.DESC) Pageable pageable){
+        HttpSession session = request.getSession(false);
+        Member member = (Member) session.getAttribute(SessionConst.LOGIN_MEMBER);
+
+        Page<Study> studyList = studyService.findRecruitmentList(pageable, member);
         return studyList;
     }
 }
